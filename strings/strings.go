@@ -42,3 +42,32 @@ func IsPermutation(s1, s2 string) bool {
 }
 
 // 1.3 URLify
+// O()
+func URLify(s string) string {
+	str := []byte(s)
+
+	// Count the spaces
+	count := 0
+	for _, v := range str {
+		if v == byte(' ') {
+			count++
+		}
+	}
+	newLen := len(str) + count*2
+	newStr := make([]byte, newLen)
+
+	// Scan the string backwards
+	for i := len(str) - 1; i >= 0; i-- {
+		if str[i] == byte(' ') {
+			newStr[newLen-1] = '0'
+			newStr[newLen-2] = '2'
+			newStr[newLen-3] = '%'
+			newLen -= 3
+		} else {
+			newStr[newLen-1] = str[i]
+			newLen--
+		}
+	}
+
+	return string(newStr)
+}

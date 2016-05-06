@@ -45,3 +45,21 @@ func TestIsPermutation(t *testing.T) {
 		}
 	}
 }
+
+// 1.3 URLify
+var urlifyTests = []struct {
+	s        string // input
+	expected string
+}{
+	{"Niko", "Niko"},
+	{"I run far", "I%20run%20far"},
+}
+
+func TestURLify(t *testing.T) {
+	for _, tt := range urlifyTests {
+		actual := URLify(tt.s)
+		if actual != tt.expected {
+			t.Errorf("URLify(\"%s\") expected %v, actual %v", tt.s, tt.expected, actual)
+		}
+	}
+}
