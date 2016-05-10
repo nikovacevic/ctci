@@ -83,3 +83,26 @@ func TestPalindrome(t *testing.T) {
 		}
 	}
 }
+
+// 1.5 One Away
+var oneAwayTests = []struct {
+	s1       string // input
+	s2       string // input
+	expected bool
+}{
+	{"Niko", "Nike", true},
+	{"Niko", "Niko", true},
+	{"Niko", "Nik", true},
+	{"Niko", "Nice", false},
+	{"", "a", true},
+	{"a", "", true},
+}
+
+func TestOneAway(t *testing.T) {
+	for _, tt := range oneAwayTests {
+		actual := IsOneAway(tt.s1, tt.s2)
+		if actual != tt.expected {
+			t.Errorf("IsOneAway(\"%s\", \"%s\") expected %v, actual %v", tt.s1, tt.s2, tt.expected, actual)
+		}
+	}
+}

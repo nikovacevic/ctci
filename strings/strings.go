@@ -118,14 +118,42 @@ func IsOneAway(s1, s2 string) bool {
 		return isOneRemovalAway(s1, s2)
 	} else if len(s1) == len(s2)-1 {
 		// compare insertions
-		return isOneInsertionAway(s1, s2)
+		return isOneRemovalAway(s2, s1)
 	} else {
 		return false
 	}
 }
 
-func isOneSubsititutionAway(s1, s2 string) bool {
+func isOneSubstitutionAway(s1, s2 string) bool {
 	str1 := []byte(s1)
 	str2 := []byte(s2)
-	for
+
+	diffCount := 0
+	for i, c := range str1 {
+		if c != str2[i] {
+			diffCount++
+		}
+		if diffCount > 1 {
+			return false
+		}
+	}
+
+	return true
+}
+
+func isOneRemovalAway(s1, s2 string) bool {
+	str1 := []byte(s1)
+	str2 := []byte(s2)
+
+	removalCount := 0
+	for i, c := range str1 {
+		if len(str2) <= i || c != str2[i] {
+			removalCount++
+		}
+		if removalCount > 1 {
+			return false
+		}
+	}
+
+	return true
 }
