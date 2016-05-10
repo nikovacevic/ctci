@@ -105,7 +105,7 @@ func IsPalindromePermutation(s string) bool {
 }
 
 // 1.5 One Away
-// O()
+// O(len(max(s1, s2)))
 func IsOneAway(s1, s2 string) bool {
 	if s1 == s2 {
 		// same string
