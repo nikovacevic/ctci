@@ -63,3 +63,23 @@ func TestURLify(t *testing.T) {
 		}
 	}
 }
+
+// 1.4 Palindrome Permutation
+var palindromeTests = []struct {
+	s        string // input
+	expected bool
+}{
+	{"Niko", false},
+	{"I run far", false},
+	{"racecar", true},
+	{"rceraca", true},
+}
+
+func TestPalindrome(t *testing.T) {
+	for _, tt := range palindromeTests {
+		actual := IsPalindromePermutation(tt.s)
+		if actual != tt.expected {
+			t.Errorf("IsPalindromePermutation(\"%s\") expected %v, actual %v", tt.s, tt.expected, actual)
+		}
+	}
+}

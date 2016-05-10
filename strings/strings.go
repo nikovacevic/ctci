@@ -1,7 +1,7 @@
 package strings
 
 // 1.1 Is Unique
-// O(N) : N = len(s)
+// O(len(s))
 func IsUnique(s string) bool {
 	runes := make(map[rune]bool)
 
@@ -17,7 +17,7 @@ func IsUnique(s string) bool {
 }
 
 // 1.2 Check Permutation
-// O(N+M) : N = len(s1), M = len(s2)
+// O(len(s1) + len(s2)) : N = len(s1), M = len(s2)
 func IsPermutation(s1, s2 string) bool {
 	if len(s1) != len(s2) {
 		return false
@@ -42,7 +42,7 @@ func IsPermutation(s1, s2 string) bool {
 }
 
 // 1.3 URLify
-// O()
+// O(len(s))
 func URLify(s string) string {
 	str := []byte(s)
 
@@ -70,4 +70,62 @@ func URLify(s string) string {
 	}
 
 	return string(newStr)
+}
+
+// 1.4 Palindrome Permutation
+// O(len(s))
+func IsPalindromePermutation(s string) bool {
+	// map of character frequency
+	charMap := make(map[byte]int)
+	// s as array of bytes
+	str := []byte(s)
+
+	for _, v := range str {
+		_, ok := charMap[v]
+		if !ok {
+			charMap[v] = 0
+		}
+		charMap[v]++
+	}
+
+	// if character exists w/ odd frequency, flag as true
+	oddExists := false
+	for _, c := range charMap {
+		if c%2 == 1 {
+			if oddExists {
+				// more than one odd frequency
+				return false
+			} else {
+				oddExists = true
+			}
+		}
+	}
+
+	return true
+}
+
+// 1.5 One Away
+// O()
+func IsOneAway(s1, s2 string) bool {
+	if s1 == s2 {
+		// same string
+		return true
+	} else if len(s1) == len(s2) {
+		// compare substitutions
+		return isOneSubstitutionAway(s1, s2)
+	} else if len(s1) == len(s2)+1 {
+		// compare removals
+		return isOneRemovalAway(s1, s2)
+	} else if len(s1) == len(s2)-1 {
+		// compare insertions
+		return isOneInsertionAway(s1, s2)
+	} else {
+		return false
+	}
+}
+
+func isOneSubsititutionAway(s1, s2 string) bool {
+	str1 := []byte(s1)
+	str2 := []byte(s2)
+	for
 }
