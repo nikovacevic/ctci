@@ -1,4 +1,4 @@
-package strings
+package string
 
 // 1.1 Is Unique
 // O(len(s))
@@ -157,3 +157,11 @@ func isOneRemovalAway(s1, s2 string) bool {
 
 	return true
 }
+
+// 1.6 String Compression
+
+// 1.7 Rotate Matrix
+
+// 1.8 Zero Matrix
+
+// 1.9 String Rotation
