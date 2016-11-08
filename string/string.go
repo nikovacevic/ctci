@@ -160,7 +160,7 @@ func isOneRemovalAway(s1, s2 string) bool {
 }
 
 // Compress (1.6)
-// O(?)
+// O(len(s))
 func Compress(s string) string {
 	if len(s) < 3 {
 		return s
