@@ -106,3 +106,24 @@ func TestOneAway(t *testing.T) {
 		}
 	}
 }
+
+// Compress (1.6)
+var compressTests = []struct {
+	s   string
+	exp string
+}{
+	{"aaabbbccc", "a3b3c3"},
+	{"abc", "abc"},
+	{"aabcc", "aabcc"},
+	{"aabbcc", "aabbcc"},
+	{"aabbbcc", "a2b3c2"},
+}
+
+func TestCompress(t *testing.T) {
+	for _, tt := range compressTests {
+		act := Compress(tt.s)
+		if act != tt.exp {
+			t.Errorf("Compress(\"%s\") expected %v, actual %v", tt.s, tt.exp, act)
+		}
+	}
+}

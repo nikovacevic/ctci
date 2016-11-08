@@ -1,6 +1,8 @@
 package string
 
-// 1.1 Is Unique
+import "strconv"
+
+// IsUnique (1.1)
 // O(len(s))
 func IsUnique(s string) bool {
 	runes := make(map[rune]bool)
@@ -16,7 +18,7 @@ func IsUnique(s string) bool {
 	return true
 }
 
-// 1.2 Check Permutation
+// IsPermutation (1.2)
 // O(len(s1) + len(s2)) : N = len(s1), M = len(s2)
 func IsPermutation(s1, s2 string) bool {
 	if len(s1) != len(s2) {
@@ -41,7 +43,7 @@ func IsPermutation(s1, s2 string) bool {
 	return true
 }
 
-// 1.3 URLify
+// URLify (1.3)
 // O(len(s))
 func URLify(s string) string {
 	str := []byte(s)
@@ -72,7 +74,7 @@ func URLify(s string) string {
 	return string(newStr)
 }
 
-// 1.4 Palindrome Permutation
+// IsPalindromePermutation (1.4)
 // O(len(s))
 func IsPalindromePermutation(s string) bool {
 	// map of character frequency
@@ -95,16 +97,15 @@ func IsPalindromePermutation(s string) bool {
 			if oddExists {
 				// more than one odd frequency
 				return false
-			} else {
-				oddExists = true
 			}
+			oddExists = true
 		}
 	}
 
 	return true
 }
 
-// 1.5 One Away
+// IsOneAway (1.5)
 // O(len(max(s1, s2)))
 func IsOneAway(s1, s2 string) bool {
 	if s1 == s2 {
@@ -158,7 +159,35 @@ func isOneRemovalAway(s1, s2 string) bool {
 	return true
 }
 
-// 1.6 String Compression
+// Compress (1.6)
+// O(?)
+func Compress(s string) string {
+	if len(s) < 3 {
+		return s
+	}
+	out := ""    // compressed output string
+	comp := 0    // compression score
+	curr := s[0] // current Unicode code point
+	count := 1   // consecutive count of curr
+	for i := 1; i < len(s); i++ {
+		if s[i] == curr {
+			count++
+			continue
+		}
+		// New Unicode code point
+		out += string(curr) + strconv.Itoa(count)
+		comp += count - 2
+		count = 1
+		curr = s[i]
+	}
+	out += string(curr) + strconv.Itoa(count)
+	comp += count - 2
+	if comp > 0 {
+		// Compression succeeded
+		return out
+	}
+	return s
+}
 
 // 1.7 Rotate Matrix
 
