@@ -4,11 +4,13 @@ Solutions and tests for Cracking the Coding Interview exercises, written in Go
 
 ### Chapter 1 | Arrays and Strings
 
-[package string](https://github.com/nikovacevic/ctci/blob/master/string/string.go) (Exercises 1, 2, 3, 4, 5, 6, 9)
+[package string](https://github.com/nikovacevic/ctci/blob/master/string/string.go) (Exercises 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.9)
 
-[package array](https://github.com/nikovacevic/ctci/blob/master/array/array.go) (Exercises 7, 8)
+[package array](https://github.com/nikovacevic/ctci/blob/master/array/array.go) (Exercises 1.7, 1.8)
 
 ### Chapter 2 | Linked Lists
+
+[package list](https://github.com/nikovacevic/ctci/blob/master/list/list.go) (Exercise 2.1)
 
 ### Chapter 3 | Stacks and Queues
 
