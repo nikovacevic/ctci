@@ -127,3 +127,26 @@ func TestCompress(t *testing.T) {
 		}
 	}
 }
+
+// IsRotation (1.9)
+var isRotationTests = []struct {
+	s1  string
+	s2  string
+	exp bool
+}{
+	{"abcde", "cdeab", true},
+	{"abcde", "cdeba", false},
+	{"aaaba", "baaaa", true},
+	{"aaaba", "aaaaa", false},
+	{"baaba", "baaba", true},
+	{"baaba", "bbaaa", false},
+}
+
+func TestIsRotation(t *testing.T) {
+	for _, tt := range isRotationTests {
+		act := IsRotation(tt.s1, tt.s2)
+		if act != tt.exp {
+			t.Errorf("IsRotation(\"%s\", \"%s\") expected %v, actual %v", tt.s1, tt.s2, tt.exp, act)
+		}
+	}
+}

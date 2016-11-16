@@ -189,7 +189,28 @@ func Compress(s string) string {
 	return s
 }
 
-// 1.9 String Rotation
-// Assume you have a functino isSubstring, which checks if one word is a
+// IsRotation (1.9)
+// Assume you have a function isSubstring, which checks if one word is a
 // substring of another. Given two strings, s1 and s2, check if s2 is a rotation
 // of s2 using only one call to isSubstring.
+func IsRotation(s1, s2 string) bool {
+	if s1 == s2 {
+		return true
+	}
+	if len(s1) != len(s2) {
+		return false
+	}
+	return isSubstring(s2, s1+s1)
+}
+
+func isSubstring(s1, s2 string) bool {
+	if len(s1) > len(s2) {
+		return false
+	}
+	for i := 0; i < len(s2)-len(s1); i++ {
+		if s1 == s2[i:i+len(s1)] {
+			return true
+		}
+	}
+	return false
+}
