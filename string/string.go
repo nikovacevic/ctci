@@ -189,8 +189,7 @@ func Compress(s string) string {
 	return s
 }
 
-// 1.7 Rotate Matrix
-
-// 1.8 Zero Matrix
-
 // 1.9 String Rotation
+// Assume you have a functino isSubstring, which checks if one word is a
+// substring of another. Given two strings, s1 and s2, check if s2 is a rotation
+// of s2 using only one call to isSubstring.
