@@ -5,6 +5,7 @@ Solutions and tests for Cracking the Coding Interview exercises, written in Go
 ### Chapter 1 | Arrays and Strings
 
 [package string](https://github.com/nikovacevic/ctci/blob/master/string/string.go) (Exercises 1, 2, 3, 4, 5, 6)
+
 [package array](https://github.com/nikovacevic/ctci/blob/master/array/array.go) (Exercise 7)
 
 ## Chapter 2 | Linked Lists
