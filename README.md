@@ -8,22 +8,22 @@ Solutions and tests for Cracking the Coding Interview exercises, written in Go
 
 [package array](https://github.com/nikovacevic/ctci/blob/master/array/array.go) (Exercise 7)
 
-## Chapter 2 | Linked Lists
+### Chapter 2 | Linked Lists
 
-## Chapter 3 | Stacks and Queues
+### Chapter 3 | Stacks and Queues
 
-## Chapter 4 | Trees and Graphs
+### Chapter 4 | Trees and Graphs
 
-## Chapter 5 | Bit Manipulation
+### Chapter 5 | Bit Manipulation
 
-## Chapter 6 | Math and Logic Puzzles
+### Chapter 6 | Math and Logic Puzzles
 
-## Chapter 7 | Object-oriented Design
+### Chapter 7 | Object-oriented Design
 
-## Chapter 8 | Recursion and Dynamic Programming
+### Chapter 8 | Recursion and Dynamic Programming
 
-## Chapter 9 | System Design and Scalability
+### Chapter 9 | System Design and Scalability
 
-## Chapter 10 | Sorting and Searching
+### Chapter 10 | Sorting and Searching
 
-## Chapter 11 | Testing
+### Chapter 11 | Testing
