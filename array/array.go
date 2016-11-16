@@ -25,6 +25,26 @@ func RotateMatrix(in [][]int) [][]int {
 	return in
 }
 
-// 1.8 Zero Matrix
+// ZeroMatrix (1.8)
 // Write an alorithm such that if an element in an MxN matrix is 0, its entire
 // row and columns are set to 0.
+func ZeroMatrix(in [][]int) [][]int {
+	zerox := make(map[int]bool)
+	zeroy := make(map[int]bool)
+	for x := 0; x < len(in); x++ {
+		for y := 0; y < len(in[0]); y++ {
+			if in[x][y] == 0 {
+				zerox[x] = true
+				zeroy[y] = true
+			}
+		}
+	}
+	for x := 0; x < len(in); x++ {
+		for y := 0; y < len(in[0]); y++ {
+			if zerox[x] || zeroy[y] {
+				in[x][y] = 0
+			}
+		}
+	}
+	return in
+}

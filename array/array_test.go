@@ -18,7 +18,28 @@ func TestRotateMatrix(t *testing.T) {
 	for _, tt := range rotateMatrixTests {
 		act := RotateMatrix(tt.in)
 		if !matricesAreEqual(act, tt.exp) {
-			t.Errorf("RotateMatrix(\"%v\") expected %v, actual %v", tt.in, tt.exp, act)
+			t.Errorf("RotateMatrix() expected %v, actual %v", tt.exp, act)
+		}
+	}
+}
+
+// 1.8 Zero Matrix
+var zeroMatrixTests = []struct {
+	in  [][]int
+	exp [][]int
+}{
+	{[][]int{[]int{1}}, [][]int{[]int{1}}},
+	{[][]int{[]int{1, 0}}, [][]int{[]int{0, 0}}},
+	{[][]int{[]int{1, 1}, []int{1, 0}}, [][]int{[]int{1, 0}, []int{0, 0}}},
+	{[][]int{[]int{1, 1, 1}, []int{1, 0, 1}, []int{1, 1, 1}}, [][]int{[]int{1, 0, 1}, []int{0, 0, 0}, []int{1, 0, 1}}},
+	{[][]int{[]int{1, 1, 1, 1, 1}, []int{0, 0, 1, 1, 1}, []int{1, 1, 1, 1, 0}, []int{1, 1, 1, 1, 1}, []int{1, 1, 1, 0, 0}}, [][]int{[]int{0, 0, 1, 0, 0}, []int{0, 0, 0, 0, 0}, []int{0, 0, 0, 0, 0}, []int{0, 0, 1, 0, 0}, []int{0, 0, 0, 0, 0}}},
+}
+
+func TestZeroMatrix(t *testing.T) {
+	for _, tt := range rotateMatrixTests {
+		act := ZeroMatrix(tt.in)
+		if !matricesAreEqual(act, tt.exp) {
+			t.Errorf("ZeroMatrix() expected %v, actual %v", tt.exp, act)
 		}
 	}
 }
