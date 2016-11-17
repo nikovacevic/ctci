@@ -1,6 +1,9 @@
 package list
 
-import "strconv"
+import (
+	"fmt"
+	"strconv"
+)
 
 // List implements a linked list of type int
 type List struct {
@@ -13,6 +16,7 @@ type Node struct {
 	Value int
 	Prev  *Node
 	Next  *Node
+	List  *List
 }
 
 // NewList creates a new List from a variadic set of integers
@@ -21,12 +25,12 @@ func NewList(values ...int) *List {
 	var prev *Node
 	for v, value := range values {
 		if v == 0 {
-			head := &Node{value, nil, nil}
+			head := &Node{value, nil, nil, &list}
 			list.Head = head
 			list.Length = 1
 			prev = head
 		} else {
-			node := &Node{value, prev, nil}
+			node := &Node{value, prev, nil, &list}
 			(*prev).Next = node
 			prev = node
 			list.Length++
@@ -49,10 +53,23 @@ func Equal(list1, list2 List) bool {
 	return true
 }
 
+// Remove removes a
+func (l *List) Remove(n *Node) error {
+	if (*n).List.Head != l.Head {
+		return fmt.Errorf("List %v does not contain node %v", l, n)
+	}
+	(*n.Prev).Next = n.Next
+	if (*n).Next != nil {
+		(*n.Next).Prev = n.Prev
+	}
+	(*l).Length--
+	return nil
+}
+
 // String prints a List in readable format
-func (list *List) String() string {
+func (l *List) String() string {
 	str := "["
-	for n := (*list).Head; n != nil; n = (*n).Next {
+	for n := (*l).Head; n != nil; n = (*n).Next {
 		str += strconv.Itoa(n.Value)
 		if (*n).Next != nil {
 			str += ", "
@@ -64,5 +81,12 @@ func (list *List) String() string {
 
 // RemoveDuplicates removes duplicates from an un-sorted linked list
 func RemoveDuplicates(l List) List {
+	m := make(map[int]bool)
+	for n := l.Head; n != nil; n = n.Next {
+		if m[n.Value] {
+			l.Remove(n)
+		}
+		m[n.Value] = true
+	}
 	return l
 }
