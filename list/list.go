@@ -2,6 +2,7 @@ package list
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 )
 
@@ -166,4 +167,41 @@ func (l *List) Partition(p int) *List {
 		}
 	}
 	return pl
+}
+
+// SumLists (2.5) accepts two base-10 natural numbers represented by ones, tens,
+// hundreds, ... place as a linked list, returning the sum of the two.
+func SumLists(a, b *List) int {
+	if b.Length > a.Length {
+		a, b = b, a
+	}
+	na := a.Head
+	nb := b.Head
+	s := 0 // sum
+	p := 0 // power of 10
+	c := 0 // carry
+	for nb != nil {
+		val := na.Value + nb.Value + c
+		c = 0
+		if val > 10 {
+			val -= 10
+			c = 1
+		}
+		s += val * int(math.Pow10(p))
+		na = na.Next
+		nb = nb.Next
+		p++
+	}
+	for na != nil {
+		val := na.Value + c
+		c = 0
+		if val > 10 {
+			val -= 10
+			c = 1
+		}
+		s += val * int(math.Pow10(p))
+		na = na.Next
+		p++
+	}
+	return s
 }

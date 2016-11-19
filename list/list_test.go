@@ -75,7 +75,7 @@ func TestKthToLast(t *testing.T) {
 	}
 }
 
-// 2.3 Partition
+// 2.4 Partition
 var partitionTests = []struct {
 	list *List
 	p    int
@@ -92,6 +92,28 @@ func TestPartition(t *testing.T) {
 		act := tt.list.Partition(tt.p)
 		if !Equal(tt.exp, act) {
 			t.Errorf("%v.Partition(%v) expected %v, actual %v", tt.list, tt.p, tt.exp, act)
+		}
+	}
+}
+
+// 2.5 SumLists
+var sumListsTests = []struct {
+	a   *List
+	b   *List
+	exp int
+}{
+	{NewList(0), NewList(0), 0},
+	{NewList(1), NewList(2), 3},
+	{NewList(3, 1, 2), NewList(2, 1, 3), 525},
+	{NewList(8, 3, 1, 2), NewList(2, 1, 3), 2450},
+	{NewList(9, 9, 9, 9, 9, 9, 9), NewList(9, 9, 9, 9), 10009998},
+}
+
+func TestSumLists(t *testing.T) {
+	for _, tt := range sumListsTests {
+		act := SumLists(tt.a, tt.b)
+		if tt.exp != act {
+			t.Errorf("SumLists(%v, %v) expected %v, actual %v", tt.a, tt.b, tt.exp, act)
 		}
 	}
 }
