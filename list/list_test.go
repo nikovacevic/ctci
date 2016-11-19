@@ -60,7 +60,7 @@ var kthToLastTests = []struct {
 	{NewList(1, 2, 3), 3, 0, fmt.Errorf("Index k out of bounds")},
 }
 
-func TestKthToLasts(t *testing.T) {
+func TestKthToLast(t *testing.T) {
 	for _, tt := range kthToLastTests {
 		act, err := tt.list.KthToLast(tt.k)
 		if tt.err != nil {
@@ -71,6 +71,27 @@ func TestKthToLasts(t *testing.T) {
 			if tt.exp != act.Value {
 				t.Errorf("%v.KthToLast(%v) expected (%v, %v), actual (%v, %v)", tt.list, tt.k, tt.exp, tt.err, act, err)
 			}
+		}
+	}
+}
+
+// 2.3 Partition
+var partitionTests = []struct {
+	list *List
+	p    int
+	exp  *List
+}{
+	{NewList(3, 1, 2), 3, NewList(2, 1, 3)},
+	{NewList(1, 2, 3, 4, 5), 3, NewList(2, 1, 3, 4, 5)},
+	{NewList(1, 2, 1, 9), 10, NewList(9, 1, 2, 1)},
+	{NewList(1, 2, 1, 9), 0, NewList(1, 2, 1, 9)},
+}
+
+func TestPartition(t *testing.T) {
+	for _, tt := range partitionTests {
+		act := tt.list.Partition(tt.p)
+		if !Equal(tt.exp, act) {
+			t.Errorf("%v.Partition(%v) expected %v, actual %v", tt.list, tt.p, tt.exp, act)
 		}
 	}
 }

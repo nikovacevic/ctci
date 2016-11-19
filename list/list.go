@@ -68,28 +68,30 @@ func Remove(n *Node) error {
 }
 
 // InsertAfter inserts a Node into a List after the given Node
-func (n *Node) InsertAfter(after *Node) error {
-	l := (*after).List
-	next := (*after).Next
-	(*after).Next = n
-	(*n).Next = next
-	(*l).Length++
+func (n *Node) InsertAfter(a *Node) error {
+	l := a.List
+	next := a.Next
+	n.Prev = a
+	n.Next = next
+	a.Next = n
+	l.Length++
 	return nil
 }
 
 // InsertBefore inserts a Node into a List before the given Node
-func (n *Node) InsertBefore(before *Node) error {
-	l := (*before).List
-	if before == (*l).Head {
-		(*l).Head = n
-		(*n).Next = before
-		(*l).Length++
-		return nil
+func (n *Node) InsertBefore(b *Node) error {
+	l := b.List
+	var prev *Node
+	if b == l.Head {
+		l.Head = n
+		prev = nil
+	} else {
+		prev = b.Prev
 	}
-	prev := (*before).Prev
-	(*before).Prev = n
-	(*n).Prev = prev
-	(*l).Length++
+	n.Prev = prev
+	n.Next = b
+	b.Prev = n
+	l.Length++
 	return nil
 }
 
@@ -122,7 +124,7 @@ func (l *List) RemoveDuplicates() {
 	}
 }
 
-// KthToLast returns the kth to last Node in the List. Returns an error if k is
+// KthToLast (2.2) returns the kth to last Node in the List. Returns an error if k is
 // out of bounds. (Does not leverage advantages of doubly-linked list because
 // the prompt calls for a singly-linked list)
 func (l *List) KthToLast(k int) (*Node, error) {
@@ -142,4 +144,26 @@ func (l *List) KthToLast(k int) (*Node, error) {
 		b = b.Next
 	}
 	return a, nil
+}
+
+// Partition (2.4) arranges the nodes in the given List around the given value,
+// p, such that all Nodes with value less than p come before those with value
+// greater than or equal to p.
+func (l *List) Partition(p int) *List {
+	if l.Length < 2 {
+		return l
+	}
+	pl := NewList(l.Head.Value)
+	b := pl.Head
+	for a := l.Head.Next; a != nil; a = a.Next {
+		if a.Value < p {
+			i := &Node{a.Value, nil, nil, pl}
+			i.InsertBefore(pl.Head)
+		} else {
+			i := &Node{a.Value, nil, nil, pl}
+			i.InsertAfter(b)
+			b = i
+		}
+	}
+	return pl
 }
