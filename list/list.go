@@ -22,26 +22,29 @@ type Node struct {
 // NewList creates a new List from a variadic set of integers
 func NewList(values ...int) *List {
 	list := List{}
-	var prev *Node
-	for v, value := range values {
-		if v == 0 {
-			head := &Node{value, nil, nil, &list}
-			list.Head = head
-			list.Length = 1
-			prev = head
-		} else {
-			node := &Node{value, prev, nil, &list}
-			(*prev).Next = node
-			prev = node
-			list.Length++
-		}
+	if len(values) == 0 {
+		return &list
 	}
+
+	head := &Node{values[0], nil, nil, &list}
+	list.Head = head
+	list.Length = 1
+	prev := head
+
+	values = values[1:]
+	for _, value := range values {
+		node := &Node{value, prev, nil, &list}
+		(*prev).Next = node
+		prev = node
+		list.Length++
+	}
+
 	return &list
 }
 
 // Equal returns true if l1 and l2 have identical elements in the same order
 // and returns false otherwise
-func Equal(list1, list2 List) bool {
+func Equal(list1, list2 *List) bool {
 	if list1.Length != list2.Length {
 		return false
 	}
@@ -53,11 +56,9 @@ func Equal(list1, list2 List) bool {
 	return true
 }
 
-// Remove removes a
-func (l *List) Remove(n *Node) error {
-	if (*n).List.Head != l.Head {
-		return fmt.Errorf("List %v does not contain node %v", l, n)
-	}
+// Remove a Node from a List
+func Remove(n *Node) error {
+	l := (*n).List
 	(*n.Prev).Next = n.Next
 	if (*n).Next != nil {
 		(*n.Next).Prev = n.Prev
@@ -66,10 +67,36 @@ func (l *List) Remove(n *Node) error {
 	return nil
 }
 
+// InsertAfter inserts a Node into a List after the given Node
+func (n *Node) InsertAfter(after *Node) error {
+	l := (*after).List
+	next := (*after).Next
+	(*after).Next = n
+	(*n).Next = next
+	(*l).Length++
+	return nil
+}
+
+// InsertBefore inserts a Node into a List before the given Node
+func (n *Node) InsertBefore(before *Node) error {
+	l := (*before).List
+	if before == (*l).Head {
+		(*l).Head = n
+		(*n).Next = before
+		(*l).Length++
+		return nil
+	}
+	prev := (*before).Prev
+	(*before).Prev = n
+	(*n).Prev = prev
+	(*l).Length++
+	return nil
+}
+
 // String prints a List in readable format
-func (l *List) String() string {
+func (l List) String() string {
 	str := "["
-	for n := (*l).Head; n != nil; n = (*n).Next {
+	for n := l.Head; n != nil; n = (*n).Next {
 		str += strconv.Itoa(n.Value)
 		if (*n).Next != nil {
 			str += ", "
@@ -79,14 +106,40 @@ func (l *List) String() string {
 	return str
 }
 
-// RemoveDuplicates removes duplicates from an un-sorted linked list
-func RemoveDuplicates(l List) List {
+// String prints a Node in readable format
+func (n Node) String() string {
+	return fmt.Sprintf("{%v}", n.Value)
+}
+
+// RemoveDuplicates (2.1) removes duplicates from an un-sorted linked list
+func (l *List) RemoveDuplicates() {
 	m := make(map[int]bool)
-	for n := l.Head; n != nil; n = n.Next {
-		if m[n.Value] {
-			l.Remove(n)
+	for n := (*l).Head; n != nil; n = (*n).Next {
+		if m[(*n).Value] {
+			Remove(n)
 		}
 		m[n.Value] = true
 	}
-	return l
+}
+
+// KthToLast returns the kth to last Node in the List. Returns an error if k is
+// out of bounds. (Does not leverage advantages of doubly-linked list because
+// the prompt calls for a singly-linked list)
+func (l *List) KthToLast(k int) (*Node, error) {
+	if k < 0 {
+		return nil, fmt.Errorf("Index k out of bounds")
+	}
+	b := l.Head
+	for j := 0; j < k; j++ {
+		b = b.Next
+		if b == nil {
+			return nil, fmt.Errorf("Index k out of bounds")
+		}
+	}
+	a := l.Head
+	for b.Next != nil {
+		a = a.Next
+		b = b.Next
+	}
+	return a, nil
 }
