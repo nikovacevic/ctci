@@ -205,3 +205,22 @@ func SumLists(a, b *List) int {
 	}
 	return s
 }
+
+// IsPalindrome (2.6) checks if a List is a palindrome
+func (l *List) IsPalindrome() bool {
+	if l.Length < 2 {
+		return true
+	}
+	a, b := l.Head, l.Head
+	for b.Next != nil {
+		b = b.Next
+	}
+	for ia, ib := 0, l.Length-1; ia < ib; ia, ib = ia+1, ib-1 {
+		if a.Value != b.Value {
+			return false
+		}
+		a = a.Next
+		b = b.Prev
+	}
+	return true
+}

@@ -117,3 +117,26 @@ func TestSumLists(t *testing.T) {
 		}
 	}
 }
+
+// 2.6 IsPalindrome
+var isPalindromeTests = []struct {
+	list *List
+	exp  bool
+}{
+	{NewList(), true},
+	{NewList(1), true},
+	{NewList(1, 1), true},
+	{NewList(1, 0, 1), true},
+	{NewList(1, 2, 2, 1), true},
+	{NewList(1, 2, 3), false},
+	{NewList(1, 2, 3, 5, 4, 5, 3, 2, 1), true},
+}
+
+func TestIsPalindrome(t *testing.T) {
+	for _, tt := range isPalindromeTests {
+		act := tt.list.IsPalindrome()
+		if tt.exp != act {
+			t.Errorf("IsPalindrome(%v) expected %v, actual %v", tt.list, tt.exp, act)
+		}
+	}
+}

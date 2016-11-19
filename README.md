@@ -10,7 +10,7 @@ Solutions and tests for Cracking the Coding Interview exercises, written in Go
 
 ### Chapter 2 | Linked Lists
 
-[package list](https://github.com/nikovacevic/ctci/blob/master/list/list.go) (Exercises 2.1, 2.2, 2.4, 2.5)
+[package list](https://github.com/nikovacevic/ctci/blob/master/list/list.go) (Exercises 2.1, 2.2, 2.4, 2.5, 2.6)
 
 ### Chapter 3 | Stacks and Queues
 
