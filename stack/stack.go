@@ -7,8 +7,8 @@ import (
 
 // Stack defines behavior of a stack data structure
 type Stack interface {
-	Pop() (interface{}, error)
 	Push(interface{})
+	Pop() (interface{}, error)
 	Peek() (interface{}, error)
 	IsEmpty() bool
 }
@@ -24,6 +24,14 @@ func NewIntStack() *IntStack {
 	return &IntStack{stack: []int{}}
 }
 
+// Push takes one or more ints, pushing each onto the IntStack in the given
+// order; e.g. Push(1, 2, 3) causes 3 to be the top element.
+func (s *IntStack) Push(n ...int) {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+	s.stack = append(s.stack, n...)
+}
+
 // Pop removes and returns the top element in the IntStack.
 func (s *IntStack) Pop() (int, error) {
 	s.lock.Lock()
@@ -34,14 +42,6 @@ func (s *IntStack) Pop() (int, error) {
 	n := s.stack[len(s.stack)-1]
 	s.stack = s.stack[0 : len(s.stack)-1]
 	return n, nil
-}
-
-// Push takes one or more ints, pushing each onto the IntStack in the given
-// order; e.g. Push(1, 2, 3) causes 3 to be the top element.
-func (s *IntStack) Push(n ...int) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
-	s.stack = append(s.stack, n...)
 }
 
 // Peek returns the value of the top element, but does not remove it.
