@@ -1,12 +1,15 @@
 package stack
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
 // Stack defines behavior of a stack data structure
 type Stack interface {
-	Pop() interface{}
+	Pop() (interface{}, error)
 	Push(interface{})
-	Peek() interface{}
+	Peek() (interface{}, error)
 	IsEmpty() bool
 }
 
@@ -22,12 +25,15 @@ func NewIntStack() *IntStack {
 }
 
 // Pop removes and returns the top element in the IntStack.
-func (s *IntStack) Pop() int {
+func (s *IntStack) Pop() (int, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
+	if s.IsEmpty() {
+		return 0, fmt.Errorf("Stack is empty")
+	}
 	n := s.stack[len(s.stack)-1]
 	s.stack = s.stack[0 : len(s.stack)-1]
-	return n
+	return n, nil
 }
 
 // Push takes one or more ints, pushing each onto the IntStack in the given
@@ -39,10 +45,13 @@ func (s *IntStack) Push(n ...int) {
 }
 
 // Peek returns the value of the top element, but does not remove it.
-func (s *IntStack) Peek() int {
+func (s *IntStack) Peek() (int, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
-	return s.stack[len(s.stack)-1]
+	if s.IsEmpty() {
+		return 0, fmt.Errorf("Stack is empty")
+	}
+	return s.stack[len(s.stack)-1], nil
 }
 
 // IsEmpty returns true if the IntStack has no elements.
