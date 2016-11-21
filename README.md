@@ -14,7 +14,9 @@ Solutions and tests for Cracking the Coding Interview exercises, written in Go
 
 ### Chapter 3 | Stacks and Queues
 
-[package stack](https://github.com/nikovacevic/ctci/blob/master/stack/stack.go)
+[package stack](https://github.com/nikovacevic/ctci/blob/master/stack/stack.go) (Exercise 3.2)
+
+[package queue](https://github.com/nikovacevic/ctci/blob/master/queue/queue.go)
 
 ### Chapter 4 | Trees and Graphs
 
