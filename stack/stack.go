@@ -96,7 +96,7 @@ func (s *IntStack) String() string {
 	return fmt.Sprintf("%v", s.stack)
 }
 
-// Min (2.2) returns the values of the minimum element
+// Min (3.2) returns the values of the minimum element
 func (s *IntStack) Min() (int, error) {
 	if s.IsEmpty() {
 		return 0, fmt.Errorf("Stack is empty")
@@ -104,6 +104,63 @@ func (s *IntStack) Min() (int, error) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	return s.minstack[len(s.minstack)-1], nil
+}
+
+// Equals returns true if the values and structure of s are equal to that of t
+func (s *IntStack) Equals(t *IntStack) bool {
+	if len(s.stack) != len(t.stack) {
+		return false
+	}
+	for i := 0; i < len(s.stack); i++ {
+		if s.stack[i] != t.stack[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// Sort (3.5) orders the stack with the lesser numbers closer to the top
+func (s *IntStack) Sort() {
+	if len(s.stack) == 0 {
+		return
+	}
+	t := NewIntStack()
+	for !s.IsEmpty() {
+		n, err := s.Pop()
+		if err != nil {
+			panic(err)
+		}
+		if t.IsEmpty() {
+			t.Push(n)
+			continue
+		}
+		tn, err := t.Peek()
+		if err != nil {
+			panic(err)
+		}
+		for n < tn {
+			tn, err := t.Pop()
+			if err != nil {
+				panic(err)
+			}
+			s.Push(tn)
+			if t.IsEmpty() {
+				break
+			}
+			tn, err = t.Peek()
+			if err != nil {
+				panic(err)
+			}
+		}
+		t.Push(n)
+	}
+	for !t.IsEmpty() {
+		n, err := t.Pop()
+		if err != nil {
+			panic(err)
+		}
+		s.Push(n)
+	}
 }
 
 // NewIntSeries returns a new IntSeries with each IntStack of capacity cap
@@ -184,13 +241,8 @@ func (s *IntSeries) Equals(t *IntSeries) bool {
 		return false
 	}
 	for si := 0; si < len(s.stacks); si++ {
-		if len(s.stacks[si].stack) != len(t.stacks[si].stack) {
+		if !s.stacks[si].Equals(&t.stacks[si]) {
 			return false
-		}
-		for i := 0; i < len(s.stacks[si].stack); i++ {
-			if s.stacks[si].stack[i] != t.stacks[si].stack[i] {
-				return false
-			}
 		}
 	}
 	return true

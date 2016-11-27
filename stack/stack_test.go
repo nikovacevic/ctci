@@ -74,3 +74,23 @@ Tests:
 
 	}
 }
+
+var sortTests = []struct {
+	push []int
+	exp  *IntStack
+}{
+	{[]int{6, 5, 4, 3, 2, 1}, &IntStack{stack: []int{6, 5, 4, 3, 2, 1}}},
+	{[]int{1, 2, 3, 4, 5, 6}, &IntStack{stack: []int{6, 5, 4, 3, 2, 1}}},
+	{[]int{2, 3, 5, 6, 4, 1}, &IntStack{stack: []int{6, 5, 4, 3, 2, 1}}},
+}
+
+func TestSort(t *testing.T) {
+	for _, tt := range sortTests {
+		stack := NewIntStack()
+		stack.Push(tt.push...)
+		stack.Sort()
+		if !tt.exp.Equals(stack) {
+			t.Errorf("Sort() expected %v, actual %v", tt.exp, stack)
+		}
+	}
+}
