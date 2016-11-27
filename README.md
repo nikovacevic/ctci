@@ -16,7 +16,7 @@ Solutions and tests for Cracking the Coding Interview exercises, written in Go
 
 [package stack](https://github.com/nikovacevic/ctci/blob/master/stack/stack.go) (Exercises 3.2, 3.3)
 
-[package queue](https://github.com/nikovacevic/ctci/blob/master/queue/queue.go)
+[package queue](https://github.com/nikovacevic/ctci/blob/master/queue/queue.go) (Exercise 3.4)
 
 ### Chapter 4 | Trees and Graphs
 
