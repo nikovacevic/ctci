@@ -65,7 +65,8 @@ func TestNodeNeighor(t *testing.T) {
 		for i, n := range tt.nodes {
 			nodes[i] = NewIntNode(n)
 		}
-		g := NewIntGraph()
+		var g Interface
+		g = NewIntGraph()
 		for _, n := range nodes {
 			g.Insert(n)
 		}

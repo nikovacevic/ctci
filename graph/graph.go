@@ -8,20 +8,20 @@ import (
 // Interface defines the behavior of a Graph data structure
 type Interface interface {
 	Size() int
-	Insert(*Node)
-	Remove(*Node)
-	HasNode(*Node) bool
-	DFS(*Node, SearchFunc) (interface{}, error)
-	BFS(*Node, SearchFunc) (interface{}, error)
+	Insert(Node)
+	Remove(Node)
+	HasNode(Node) bool
+	DFS(Node, SearchFunc) (interface{}, error)
+	BFS(Node, SearchFunc) (interface{}, error)
 }
 
 // Node defines behavior of a Graph Node, with a value and a set of neighbors.
 type Node interface {
 	Value() interface{}
-	Neighbors() map[*Node]struct{}
-	HasNeighbor(*Node) bool
-	AddNeighbor(*Node)
-	RemoveNeighbor(*Node)
+	Neighbors() map[Node]struct{}
+	HasNeighbor(Node) bool
+	AddNeighbor(Node)
+	RemoveNeighbor(Node)
 }
 
 // Tree defines the behavior of a Tree data structure, which is a subset of
@@ -39,21 +39,33 @@ type SearchFunc func(Node) (value interface{}, done bool)
 // IntGraph implements a Graph of IntNodes
 type IntGraph struct {
 	lock  sync.Mutex
-	nodes map[*IntNode]struct{}
+	nodes map[Node]struct{}
 }
 
 // IntNode implements Node for int values
 type IntNode struct {
 	lock      sync.Mutex
 	value     int
-	neighbors map[*IntNode]struct{}
+	neighbors map[Node]struct{}
+}
+
+// MissingNodeError describes the abnormal state when a Graph does not contain
+// a Node that has been referenced
+type MissingNodeError struct {
+	graph Interface
+	node  Node
+}
+
+// Error implements the error interface
+func (e *MissingNodeError) Error() string {
+	return fmt.Sprintf("Graph does not contain Node\ngraph: %v\nnode: %v", e.graph, e.node)
 }
 
 // NewIntNode creates and returns a new *IntNode
 func NewIntNode(value int) *IntNode {
 	return &IntNode{
 		value:     value,
-		neighbors: map[*IntNode]struct{}{},
+		neighbors: map[Node]struct{}{},
 	}
 }
 
@@ -63,17 +75,17 @@ func (n *IntNode) String() string {
 }
 
 // Value returns the value of an IntNode
-func (n *IntNode) Value() int {
+func (n *IntNode) Value() interface{} {
 	return n.value
 }
 
 // Neighbors returns the set of n's neighboring IntNodes
-func (n *IntNode) Neighbors() map[*IntNode]struct{} {
+func (n *IntNode) Neighbors() map[Node]struct{} {
 	return n.neighbors
 }
 
 // AddNeighbor adds an edge from n to node
-func (n *IntNode) AddNeighbor(node *IntNode) {
+func (n *IntNode) AddNeighbor(node Node) {
 	if n.HasNeighbor(node) {
 		return
 	}
@@ -83,7 +95,7 @@ func (n *IntNode) AddNeighbor(node *IntNode) {
 }
 
 // RemoveNeighbor removes an edge from n to node, if it exists
-func (n *IntNode) RemoveNeighbor(node *IntNode) {
+func (n *IntNode) RemoveNeighbor(node Node) {
 	if !n.HasNeighbor(node) {
 		return
 	}
@@ -93,7 +105,7 @@ func (n *IntNode) RemoveNeighbor(node *IntNode) {
 }
 
 // HasNeighbor returns true if node is n's neighbor
-func (n *IntNode) HasNeighbor(node *IntNode) bool {
+func (n *IntNode) HasNeighbor(node Node) bool {
 	n.lock.Lock()
 	defer n.lock.Unlock()
 	_, ok := n.neighbors[node]
@@ -102,16 +114,16 @@ func (n *IntNode) HasNeighbor(node *IntNode) bool {
 
 // NewIntGraph creates and returns a new *IntGraph
 func NewIntGraph() *IntGraph {
-	return &IntGraph{nodes: map[*IntNode]struct{}{}}
+	return &IntGraph{nodes: map[Node]struct{}{}}
 }
 
 // String returns a string representation of the graph as an adjecency list.
 func (g *IntGraph) String() string {
 	var str string
 	for node := range g.nodes {
-		str += node.String() + "->{ "
+		str += fmt.Sprintf("%v", node) + "->{ "
 		for n := range node.Neighbors() {
-			str += n.String() + " "
+			str += fmt.Sprintf("%v", n) + " "
 		}
 		str += "}\n"
 	}
@@ -124,7 +136,7 @@ func (g *IntGraph) Size() int {
 }
 
 // HasNode returns the true if the IntGraph has the node
-func (g *IntGraph) HasNode(node *IntNode) bool {
+func (g *IntGraph) HasNode(node Node) bool {
 	g.lock.Lock()
 	defer g.lock.Unlock()
 	_, ok := g.nodes[node]
@@ -132,7 +144,7 @@ func (g *IntGraph) HasNode(node *IntNode) bool {
 }
 
 // Insert adds node to the graph
-func (g *IntGraph) Insert(node *IntNode) {
+func (g *IntGraph) Insert(node Node) {
 	if g.HasNode(node) {
 		return
 	}
@@ -142,7 +154,7 @@ func (g *IntGraph) Insert(node *IntNode) {
 }
 
 // Remove removes node from the graph
-func (g *IntGraph) Remove(node *IntNode) {
+func (g *IntGraph) Remove(node Node) {
 	if !g.HasNode(node) {
 		return
 	}
@@ -157,14 +169,19 @@ func (g *IntGraph) Remove(node *IntNode) {
 
 // DFS executes a depth-first search, applying the SearchFunc to each IntNode
 // visited to yield values and determine whether or not to continue.
-func (g *IntGraph) DFS(node *IntNode, sf SearchFunc) (interface{}, error) {
-	// TODO
+func (g *IntGraph) DFS(node Node, sf SearchFunc) (interface{}, error) {
+	if !g.HasNode(node) {
+		return nil, &MissingNodeError{g, node}
+	}
+
 	return nil, nil
 }
 
 // BFS executes a breadth-first search, applying the SearchFunc to each IntNode
 // visited to yield values and determine whether or not to continue.
-func (g *IntGraph) BFS(*Node, SearchFunc) (interface{}, error) {
-	// TODO
+func (g *IntGraph) BFS(node Node, sf SearchFunc) (interface{}, error) {
+	if !g.HasNode(node) {
+		return nil, &MissingNodeError{g, node}
+	}
 	return nil, nil
 }
