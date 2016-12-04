@@ -56,7 +56,7 @@ type MissingNodeError struct {
 	node  Node
 }
 
-func (err *MissingNodeError) Error() string {
+func (err MissingNodeError) Error() string {
 	return fmt.Sprintf("Graph does not contain Node\ngraph: %v\nnode: %v", err.graph, err.node)
 }
 
@@ -181,7 +181,7 @@ func (g *IntGraph) Remove(node Node) {
 // visited to yield values and determine whether or not to continue.
 func (g *IntGraph) DFS(node Node, sf SearchFunc) (interface{}, error) {
 	if !g.HasNode(node) {
-		return nil, &MissingNodeError{g, node}
+		return nil, MissingNodeError{g, node}
 	}
 	visited := map[Node]struct{}{}
 	return g.dfs(node, sf, visited)
@@ -204,7 +204,23 @@ func (g *IntGraph) dfs(node Node, sf SearchFunc, visited map[Node]struct{}) (int
 // visited to yield values and determine whether or not to continue.
 func (g *IntGraph) BFS(node Node, sf SearchFunc) (interface{}, error) {
 	if !g.HasNode(node) {
-		return nil, &MissingNodeError{g, node}
+		return nil, MissingNodeError{g, node}
+	}
+	visited := map[Node]struct{}{}
+	queue := []Node{node}
+	done := false
+	for len(queue) > 0 || done {
+		curr := queue[0]
+		if value, done := sf(curr); done {
+			return value, nil
+		}
+		visited[curr] = struct{}{}
+		queue = queue[1:]
+		for n := range curr.Neighbors() {
+			if _, ok := visited[n]; !ok {
+				queue = append(queue, n)
+			}
+		}
 	}
 	return nil, NotFoundError{"Search exhausted graph: objective not found"}
 }
