@@ -368,3 +368,36 @@ func TestRouteExists(t *testing.T) {
 		}
 	}
 }
+
+var minBSTTests = []struct {
+	nums []int
+	exp  []int
+}{
+	{
+		[]int{0, 1, 2},
+		[]int{0, 1, 2},
+	},
+	{
+		[]int{0, 1, 2, 3, 4, 5, 6},
+		[]int{0, 1, 2, 3, 4, 5, 6},
+	},
+	{
+		[]int{4, 6, 5, 3, 2, 7, 1, 0},
+		[]int{0, 1, 2, 3, 4, 5, 6, 7},
+	},
+}
+
+func TestMinBST(t *testing.T) {
+	for _, tt := range minBSTTests {
+		bst := NewIntBST(tt.nums)
+		act := bst.ToSlice()
+		if len(tt.exp) != len(act) {
+			t.Errorf("MinBST expected %v, actual %v", tt.exp, act)
+		}
+		for i := range tt.exp {
+			if tt.exp[i] != act[i] {
+				t.Errorf("MinBST expected %v, actual %v", tt.exp, act)
+			}
+		}
+	}
+}

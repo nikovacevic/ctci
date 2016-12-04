@@ -20,6 +20,8 @@ Solutions and tests for Cracking the Coding Interview exercises, written in Go
 
 ### Chapter 4 | Trees and Graphs
 
+[package graph](https://github.com/nikovacevic/ctci/blob/master/graph/graph.go) (Exercises 4.1, 4.2)
+
 ### Chapter 5 | Bit Manipulation
 
 ### Chapter 6 | Math and Logic Puzzles

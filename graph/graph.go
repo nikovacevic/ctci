@@ -2,6 +2,7 @@ package graph
 
 import (
 	"fmt"
+	"sort"
 	"sync"
 )
 
@@ -10,9 +11,6 @@ type Interface interface {
 	Size() int
 	Insert(Node)
 	Remove(Node)
-	HasNode(Node) bool
-	DFS(Node, SearchFunc) (interface{}, error)
-	BFS(Node, SearchFunc) (interface{}, error)
 }
 
 // Node defines behavior of a Graph Node, with a value and a set of neighbors.
@@ -20,15 +18,8 @@ type Node interface {
 	Value() interface{}
 	Neighbors() map[Node]struct{}
 	HasNeighbor(Node) bool
-	AddNeighbor(Node)
-	RemoveNeighbor(Node)
-}
-
-// Tree defines the behavior of a Tree data structure, which is a subset of
-// the graph.Interface in that it has a defined root and is acyclic
-type Tree interface {
-	Interface
-	Root() Node
+	AddNeighbor(Node) error
+	RemoveNeighbor(Node) error
 }
 
 // SearchFunc is applied to each Node that a graph search algorithm visits.
@@ -47,6 +38,45 @@ type IntNode struct {
 	lock      sync.Mutex
 	value     int
 	neighbors map[Node]struct{}
+}
+
+// BST defines the behavior of a binary search tree data structure
+type BST interface {
+	Size() int
+	Root() BSTNode
+	Insert(BSTNode)
+	Remove(BSTNode)
+	Search() (interface{}, error)
+}
+
+// BSTNode defines behavior of a node in a BST
+type BSTNode interface {
+	Value() interface{}
+	LessThan(BSTNode) bool
+	Left() BSTNode
+	Right() BSTNode
+	setLeft(BSTNode)
+	setRight(BSTNode)
+}
+
+// LessFunc is used to compare two Nodes, e.g. in Binary Tree Search, returning
+// true if Node a is less than Node b
+type LessFunc func(a, b BSTNode) bool
+
+// IntBST implements a Binary Search Tree of integers
+type IntBST struct {
+	lock sync.Mutex
+	root BSTNode
+	size int
+	lf   LessFunc
+}
+
+// IntBSTNode implements a Node for Binary Search Tree of integers
+type IntBSTNode struct {
+	lock  sync.Mutex
+	value int
+	left  BSTNode
+	right BSTNode
 }
 
 // MissingNodeError describes the case when a Graph does not contain a Node that
@@ -95,23 +125,25 @@ func (n *IntNode) Neighbors() map[Node]struct{} {
 }
 
 // AddNeighbor adds an edge from n to node
-func (n *IntNode) AddNeighbor(node Node) {
+func (n *IntNode) AddNeighbor(node Node) error {
 	if n.HasNeighbor(node) {
-		return
+		return nil
 	}
 	n.lock.Lock()
 	defer n.lock.Unlock()
 	n.neighbors[node] = struct{}{}
+	return nil
 }
 
 // RemoveNeighbor removes an edge from n to node, if it exists
-func (n *IntNode) RemoveNeighbor(node Node) {
+func (n *IntNode) RemoveNeighbor(node Node) error {
 	if !n.HasNeighbor(node) {
-		return
+		return nil
 	}
 	n.lock.Lock()
 	defer n.lock.Unlock()
 	delete(n.neighbors, node)
+	return nil
 }
 
 // HasNeighbor returns true if node is n's neighbor
@@ -171,9 +203,11 @@ func (g *IntGraph) Remove(node Node) {
 	g.lock.Lock()
 	defer g.lock.Unlock()
 	delete(g.nodes, node)
+	/* TODO Determine if losing this to the Interface change is problematic
 	for n := range g.nodes {
 		n.RemoveNeighbor(node)
 	}
+	*/
 	return
 }
 
@@ -239,4 +273,127 @@ func (g *IntGraph) RouteExists(start Node, finish Node) bool {
 		return true
 	}
 	return false
+}
+
+// NewIntBSTNode returns a new *IntBSTNode
+func NewIntBSTNode(value int) *IntBSTNode {
+	return &IntBSTNode{value: value}
+}
+
+// Value returns the int value of the node
+func (n *IntBSTNode) Value() interface{} {
+	return n.value
+}
+
+// Left returns the left child of n
+func (n *IntBSTNode) Left() BSTNode {
+	return n.left
+}
+func (n *IntBSTNode) setLeft(l BSTNode) {
+	n.left = l
+}
+
+// Right returns the right child of n
+func (n *IntBSTNode) Right() BSTNode {
+	return n.right
+}
+func (n *IntBSTNode) setRight(r BSTNode) {
+	n.right = r
+}
+
+// LessThan returns true if n's value is less than node's value. NOTE that this
+// function relies on a type assertion that will panic if node's value is not
+// assertable to (int). Can we do better?
+func (n *IntBSTNode) LessThan(node BSTNode) bool {
+	return n.value < node.Value().(int)
+}
+
+// NewIntBST (4.2) takes a slice of integers, returning a minimal binary search
+// tree of those numbers.
+func NewIntBST(nums []int) *IntBST {
+	sort.Ints(nums)
+	var r BSTNode
+	var m int
+	if len(nums) > 0 {
+		m = len(nums) / 2
+		r = NewIntBSTNode(nums[m])
+	}
+	t := &IntBST{
+		root: r,
+		lf: func(a, b BSTNode) bool {
+			return a.Value().(int) < b.Value().(int)
+		},
+		size: len(nums),
+	}
+	if len(nums[0:m]) > 0 {
+		r.setLeft(NewIntBST(nums[0:m]).Root())
+	}
+	if len(nums[m+1:]) > 0 {
+		r.setRight(NewIntBST(nums[m+1:]).Root())
+	}
+	return t
+}
+
+// Root returns the root Node of the IntBST
+func (bst *IntBST) Root() BSTNode {
+	return bst.root
+}
+
+// Size returns number of Nodes in the BST
+func (bst *IntBST) Size() int {
+	return bst.size
+}
+
+// Insert adds node to the BST
+func (bst *IntBST) Insert(node BSTNode) {
+	if bst.root == nil {
+		bst.root = node
+		bst.size = 1
+		return
+	}
+	curr := bst.root
+	for curr != nil {
+		if curr.LessThan(node) {
+			curr = curr.Right()
+		} else {
+			curr = curr.Left()
+		}
+	}
+	curr = node
+}
+
+// Remove removes node from the BST
+func (bst *IntBST) Remove(node BSTNode) {
+	// TODO
+	return
+}
+
+// Search uses binary tree search to
+func (bst *IntBST) Search() (interface{}, error) {
+	// TODO
+	return nil, nil
+}
+
+// PreOrderTraverse applies function f from smallest to largest node in BST
+func (bst *IntBST) PreOrderTraverse(f func(BSTNode)) {
+	curr := bst.root
+	preOrderTraverse(curr, f)
+}
+
+func preOrderTraverse(node BSTNode, f func(BSTNode)) {
+	if node == nil {
+		return
+	}
+	preOrderTraverse(node.Left(), f)
+	f(node)
+	preOrderTraverse(node.Right(), f)
+}
+
+// ToSlice converts an IntBST to a slice of ints
+func (bst *IntBST) ToSlice() []int {
+	s := []int{}
+	bst.PreOrderTraverse(func(node BSTNode) {
+		s = append(s, node.Value().(int))
+	})
+	return s
 }
