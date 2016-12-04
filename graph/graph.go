@@ -49,16 +49,26 @@ type IntNode struct {
 	neighbors map[Node]struct{}
 }
 
-// MissingNodeError describes the abnormal state when a Graph does not contain
-// a Node that has been referenced
+// MissingNodeError describes the case when a Graph does not contain a Node that
+// has been referenced.
 type MissingNodeError struct {
 	graph Interface
 	node  Node
 }
 
-// Error implements the error interface
-func (e *MissingNodeError) Error() string {
-	return fmt.Sprintf("Graph does not contain Node\ngraph: %v\nnode: %v", e.graph, e.node)
+func (err *MissingNodeError) Error() string {
+	return fmt.Sprintf("Graph does not contain Node\ngraph: %v\nnode: %v", err.graph, err.node)
+}
+
+// NotFoundError describes the state when a Graph search completes without
+// completing the objective, which is indicated by the SearchFunc returning
+// done=true.
+type NotFoundError struct {
+	msg string
+}
+
+func (err NotFoundError) Error() string {
+	return err.msg
 }
 
 // NewIntNode creates and returns a new *IntNode
@@ -173,8 +183,21 @@ func (g *IntGraph) DFS(node Node, sf SearchFunc) (interface{}, error) {
 	if !g.HasNode(node) {
 		return nil, &MissingNodeError{g, node}
 	}
+	visited := map[Node]struct{}{}
+	return g.dfs(node, sf, visited)
+}
 
-	return nil, nil
+func (g *IntGraph) dfs(node Node, sf SearchFunc, visited map[Node]struct{}) (interface{}, error) {
+	if value, done := sf(node); done {
+		return value, nil
+	}
+	visited[node] = struct{}{}
+	for nbr := range node.Neighbors() {
+		if _, ok := visited[nbr]; !ok {
+			return g.dfs(nbr, sf, visited)
+		}
+	}
+	return nil, NotFoundError{"Search exhausted graph: objective not found"}
 }
 
 // BFS executes a breadth-first search, applying the SearchFunc to each IntNode
@@ -183,5 +206,5 @@ func (g *IntGraph) BFS(node Node, sf SearchFunc) (interface{}, error) {
 	if !g.HasNode(node) {
 		return nil, &MissingNodeError{g, node}
 	}
-	return nil, nil
+	return nil, NotFoundError{"Search exhausted graph: objective not found"}
 }

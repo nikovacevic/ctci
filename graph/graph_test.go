@@ -65,8 +65,7 @@ func TestNodeNeighor(t *testing.T) {
 		for i, n := range tt.nodes {
 			nodes[i] = NewIntNode(n)
 		}
-		var g Interface
-		g = NewIntGraph()
+		g := NewIntGraph()
 		for _, n := range nodes {
 			g.Insert(n)
 		}
@@ -100,6 +99,101 @@ func TestNodeNeighor(t *testing.T) {
 				if !nodes[i].HasNeighbor(nodes[e]) {
 					t.Errorf("Node neighbors: expected %s->%s", nodes[i], nodes[e])
 				}
+			}
+		}
+	}
+}
+
+var dfsTests = []struct {
+	nodes []int
+	edges [][]int
+	start int
+	sf    SearchFunc
+	exp   interface{}
+}{
+	{
+		[]int{0, 1, 2},
+		[][]int{
+			[]int{1, 2},
+			[]int{2},
+			[]int{1},
+		},
+		0,
+		func(n Node) (value interface{}, done bool) {
+			if n.Value() == 2 {
+				return n.Value(), true
+			}
+			return nil, false
+		},
+		2,
+	},
+	{
+		[]int{0, 1, 2, 3, 4, 5, 6},
+		[][]int{
+			[]int{1, 2, 3},
+			[]int{4},
+			[]int{1, 5},
+			[]int{2, 4, 5},
+			[]int{3},
+			[]int{1, 4, 6},
+			[]int{0},
+		},
+		0,
+		func(n Node) (value interface{}, done bool) {
+			if n.Value() == 5 {
+				return n.Value(), true
+			}
+			return nil, false
+		},
+		5,
+	},
+	{
+		[]int{0, 1, 2, 3, 4, 5, 6},
+		[][]int{
+			[]int{1, 2, 3},
+			[]int{4},
+			[]int{1, 5},
+			[]int{2, 4, 5},
+			[]int{3},
+			[]int{1, 4, 6},
+			[]int{0},
+		},
+		0,
+		func(n Node) (value interface{}, done bool) {
+			if n.Value() == 7 {
+				return n.Value(), true
+			}
+			return nil, false
+		},
+		NotFoundError{"Search exhausted graph: objective not found"},
+	},
+}
+
+func TestDFS(t *testing.T) {
+	for _, tt := range dfsTests {
+		// Create nodes
+		nodes := make([]*IntNode, len(tt.nodes))
+		for i, n := range tt.nodes {
+			nodes[i] = NewIntNode(n)
+		}
+		g := NewIntGraph()
+		for _, n := range nodes {
+			g.Insert(n)
+		}
+		// Add neighbors
+		for i, edges := range tt.edges {
+			for _, e := range edges {
+				nodes[i].AddNeighbor(nodes[e])
+			}
+		}
+		value, err := g.DFS(nodes[0], tt.sf)
+		if err != nil {
+			if _, ok := err.(NotFoundError); !ok {
+				t.Error(err)
+			}
+		} else {
+			if value != tt.exp {
+				t.Errorf("DFS: expected %v, actual %v", tt.exp, value)
 			}
 		}
 	}
