@@ -224,3 +224,19 @@ func (g *IntGraph) BFS(node Node, sf SearchFunc) (interface{}, error) {
 	}
 	return nil, NotFoundError{"Search exhausted graph: objective not found"}
 }
+
+// RouteExists (4.1) returns true if a route from start to finish exists
+func (g *IntGraph) RouteExists(start Node, finish Node) bool {
+	if !g.HasNode(start) || !g.HasNode(finish) {
+		return false
+	}
+	if _, err := g.BFS(start, func(node Node) (interface{}, bool) {
+		if node == finish {
+			return nil, true
+		}
+		return nil, false
+	}); err == nil {
+		return true
+	}
+	return false
+}

@@ -281,7 +281,7 @@ func TestBFS(t *testing.T) {
 				nodes[i].AddNeighbor(nodes[e])
 			}
 		}
-		value, err := g.BFS(nodes[0], tt.sf)
+		value, err := g.BFS(nodes[tt.start], tt.sf)
 		if err != nil {
 			if _, ok := err.(NotFoundError); !ok {
 				t.Error(err)
@@ -290,6 +290,81 @@ func TestBFS(t *testing.T) {
 			if value != tt.exp {
 				t.Errorf("BFS: expected %v, actual %v", tt.exp, value)
 			}
+		}
+	}
+}
+
+var routeExistsTests = []struct {
+	nodes  []int
+	edges  [][]int
+	start  int
+	finish int
+	exp    bool
+}{
+	{
+		[]int{0, 1, 2},
+		[][]int{
+			[]int{1, 2},
+			[]int{2},
+			[]int{1},
+		},
+		0,
+		2,
+		true,
+	},
+	{
+		[]int{0, 1, 2, 3, 4, 5, 6},
+		[][]int{
+			[]int{1, 2, 3},
+			[]int{4},
+			[]int{1, 5},
+			[]int{2, 4, 5},
+			[]int{3},
+			[]int{1, 4, 6},
+			[]int{0},
+		},
+		0,
+		5,
+		true,
+	},
+	{
+		[]int{0, 1, 2, 3, 4, 5, 6, 7},
+		[][]int{
+			[]int{1, 2, 3},
+			[]int{4},
+			[]int{1, 5},
+			[]int{2, 4, 5},
+			[]int{3},
+			[]int{1, 4, 6},
+			[]int{0},
+			[]int{0},
+		},
+		0,
+		7,
+		false,
+	},
+}
+
+func TestRouteExists(t *testing.T) {
+	for _, tt := range routeExistsTests {
+		// Create nodes
+		nodes := make([]*IntNode, len(tt.nodes))
+		for i, n := range tt.nodes {
+			nodes[i] = NewIntNode(n)
+		}
+		g := NewIntGraph()
+		for _, n := range nodes {
+			g.Insert(n)
+		}
+		// Add neighbors
+		for i, edges := range tt.edges {
+			for _, e := range edges {
+				nodes[i].AddNeighbor(nodes[e])
+			}
+		}
+		value := g.RouteExists(nodes[tt.start], nodes[tt.finish])
+		if value != tt.exp {
+			t.Errorf("RouteExists: expected %v, actual %v", tt.exp, value)
 		}
 	}
 }
